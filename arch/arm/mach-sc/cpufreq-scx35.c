@@ -48,13 +48,13 @@
 #define GR_GEN1			(REG_GLB_GEN1)
 #endif
 
-#define FREQ_TABLE_SIZE 	10
+#define FREQ_TABLE_SIZE 	20
 #define DVFS_BOOT_TIME	(30 * HZ)
 #define SHARK_TDPLL_FREQUENCY	(768000)
 #define TRANSITION_LATENCY	(100 * 1000) /* ns */
 
-#define MAX_VOLT (1200 * 1000)
-#define MIN_VOLT (900  * 1200)
+#define MAX_VOLT (1015 * 1000)
+#define MIN_VOLT (820  * 1000)
 
 static DEFINE_MUTEX(freq_lock);
 struct cpufreq_freqs global_freqs;
@@ -68,12 +68,12 @@ struct cpufreq_conf {
 	struct clk 					*tdpllclk;
 	struct regulator 				*regulator;
 	struct cpufreq_frequency_table			*freq_tbl;
-	unsigned int					*vddarm_mv;
+	unsigned long					*vddarm_mv;
 };
 
 struct cpufreq_table_data {
 	struct cpufreq_frequency_table 		freq_tbl[FREQ_TABLE_SIZE];
-	unsigned long				 		 		vddarm_mv[FREQ_TABLE_SIZE];
+	unsigned long		 	 		vddarm_mv[FREQ_TABLE_SIZE];
 };
 
 struct cpufreq_conf *sprd_cpufreq_conf = NULL;
@@ -86,7 +86,7 @@ enum clocking_levels {
 	UC5, UC6, UC7, UC8, UC9,
 	MIN_CL=UC9,
 	EC,
-
+};
 static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 	.freq_tbl = {
 #ifdef SPRD_OC
@@ -340,11 +340,9 @@ static int sprd_cpufreq_target(struct cpufreq_policy *policy,
 	struct cpufreq_frequency_table *table;
 	int max_freq = cpufreq_max_limit;
 	int min_freq = cpufreq_min_limit;
-	int cur_freq = 0;
-	unsigned long irq_flags;
 
 	/* delay 30s to enable dvfs&dynamic-hotplug,
-         * except requirment from termal-cooling device
+         * except requirment from thermal-cooling device
          */
 	if(time_before(jiffies, boot_done)){
 		return 0;
@@ -389,14 +387,14 @@ static unsigned int sprd_cpufreq_getspeed(unsigned int cpu)
 	return sprd_raw_get_cpufreq();
 }
 
-static void sprd_set_cpureq_limit(void)
+static void sprd_set_cpufreq_limit(void)
 {
-	int i;
-	struct cpufreq_frequency_table *tmp = sprd_cpufreq_conf->freq_tbl;
-	for (i = 0; (tmp[i].frequency != CPUFREQ_TABLE_END); i++) {
-		cpufreq_min_limit = min(tmp[i].frequency, cpufreq_min_limit);
-		cpufreq_max_limit = max(tmp[i].frequency, cpufreq_max_limit);
-	}
+	cpufreq_min_limit = sprd_cpufreq_conf->freq_tbl[MIN_CL].frequency;
+#ifdef SPRD_OC
+	cpufreq_max_limit = sprd_cpufreq_conf->freq_tbl[OC4].frequency;
+#else
+	cpufreq_max_limit = sprd_cpufreq_conf->freq_tbl[NOC].frequency;
+#endif
 	pr_info("--xing-- %s max=%u min=%u\n", __func__, cpufreq_max_limit, cpufreq_min_limit);
 }
 
@@ -406,7 +404,7 @@ static int sprd_freq_table_init(void)
 	sprd_cpufreq_conf->freq_tbl = sc8830t_cpufreq_table_data_es.freq_tbl;
 	sprd_cpufreq_conf->vddarm_mv = sc8830t_cpufreq_table_data_es.vddarm_mv;
 	pr_info("sprd_freq_table_init \n");
-	sprd_set_cpureq_limit();
+	sprd_set_cpufreq_limit();
 	return 0;
 }
 
@@ -457,7 +455,7 @@ ssize_t sprd_vdd_get(char *buf) {
 #define freq_table sprd_cpufreq_conf->freq_tbl[i].frequency
 #define voltage_table sprd_cpufreq_conf->vddarm_mv[i]
 
-	for (i = 0; i <= MAX_UC; i++) {
+	for (i = 0; i <= MIN_CL; i++) {
 		len += sprintf(buf + len, "%umhz: %lu mV\n", freq_table / 1000, voltage_table / 1000);
 	}
 	return len;
@@ -467,8 +465,8 @@ void sprd_vdd_set(const char *buf) {
 	int ret = -EINVAL;
 	int i = 0;
 	int j = 0;
-	int u[MAX_UC + 1];
-	while (j < MAX_UC + 1) {
+	int u[MIN_CL + 1];
+	while (j < MIN_CL + 1) {
 		int consumed;
 		int val;
 		ret = sscanf(buf, "%d%n", &val, &consumed);
