@@ -784,4 +784,10 @@ config CORE_01A_KEY_CRASH
     bool "only for CORE PRIME REV 01A KEY CRASH"
     default n 
 
+config SPRD_OC
+	bool "CPU overclock features"
+	default n
+	help
+	  Enable CPU overclocking capability
+
 endif

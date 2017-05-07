@@ -24,7 +24,12 @@ endif
 
 obj-$(CONFIG_PM) += pm.o
 obj-$(CONFIG_FIX_V7TAGRAM_BUG) += fix_v7_tag_ram_bug.o
+
 obj-$(CONFIG_CPU_FREQ) += cpufreq-scx35.o
+ifeq ($(CONFIG_SPRD_OC),y)
+CFLAGS_cpufreq-scx35.o += -DSPRD_OC
+endif
+
 ifeq ($(CONFIG_BUS_MONITOR),y)
 obj-$(CONFIG_ARCH_SCX35) += bm_sc8830.o
 endif
