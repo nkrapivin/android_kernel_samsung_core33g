@@ -8,3 +8,8 @@ config NO_HOTPLUG_POLICY
         help
           PM hotplug policy
           Do not select an automatic hotplug policy
+
+config SS_TOUCH_BOOST_CPU_HOTPLUG
+        bool "SS touch boost CPU hotplug policy"
+        help
+          Samsung touch boost cpu hotplug policy
