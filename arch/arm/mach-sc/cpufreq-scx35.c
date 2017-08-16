@@ -80,19 +80,17 @@ struct cpufreq_conf *sprd_cpufreq_conf = NULL;
 
 enum clocking_levels {
 #ifdef SPRD_OC
-	OC4, OC3, OC2, OC1,
+	OC1,
 #endif
 	NOC, UC1, UC2, UC3, UC4,
 	UC5, UC6, UC7, UC8, UC9,
-	MIN_CL=UC9,
+	UCA,
+	MIN_CL=UCA,
 	EC,
 };
 static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 	.freq_tbl = {
 #ifdef SPRD_OC
-		{OC4, 1500000},
-		{OC3, 1366000},
-		{OC2, 1301000},
 		{OC1, 1250000},
 #endif
 		{NOC, 1200000},
@@ -105,16 +103,14 @@ static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 		{UC7, 800000},
 		{UC8, SHARK_TDPLL_FREQUENCY},
 		{UC9, 700600},
+		{UCA, 652500},
 		{EC, CPUFREQ_TABLE_END},
 	},
 	.vddarm_mv = {
 #ifdef SPRD_OC
-		[OC4]  = 1015000,
-		[OC3]  = 1000000,
-		[OC2]  = 985000,
-		[OC1]  = 970000,
+		[OC1]  = 980000,
 #endif
-		[NOC]  = 955000,
+		[NOC]  = 965000,
 		[UC1]  = 940000,
 		[UC2]  = 925000,
 		[UC3]  = 910000,
@@ -123,7 +119,8 @@ static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 		[UC6]  = 865000,
 		[UC7]  = 850000,
 		[UC8]  = 835000,
-		[UC9]  = 820000,
+		[UC9]  = 825000,
+		[UCA]  = 820000,
 		[EC]   = 820000,
         },
 };
@@ -391,7 +388,7 @@ static void sprd_set_cpufreq_limit(void)
 {
 	cpufreq_min_limit = sprd_cpufreq_conf->freq_tbl[MIN_CL].frequency;
 #ifdef SPRD_OC
-	cpufreq_max_limit = sprd_cpufreq_conf->freq_tbl[OC4].frequency;
+	cpufreq_max_limit = sprd_cpufreq_conf->freq_tbl[OC1].frequency;
 #else
 	cpufreq_max_limit = sprd_cpufreq_conf->freq_tbl[NOC].frequency;
 #endif
