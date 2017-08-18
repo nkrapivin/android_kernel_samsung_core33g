@@ -64,6 +64,10 @@ config CPU_FREQ_DEFAULT_GOV_ZENERACTIVE
 	help
 	Use the CPUFreq governor 'zeneractive' as default.
 
+config CPU_FREQ_DEFAULT_GOV_DARKNESS
+	bool "darkness"
+ 	select CPU_FREQ_GOV_DARKNESS
+
 config CPU_FREQ_DEFAULT_GOV_PERFORMANCE
 	bool "performance"
 	select CPU_FREQ_GOV_PERFORMANCE
@@ -170,6 +174,9 @@ config CPU_FREQ_GOV_ZENERACTIVE
 	suspend/wake.
 	For details, take a look at linux/Documentation/cpu-freq.
 	If in doubt, say N
+
+config CPU_FREQ_GOV_DARKNESS
+	tristate "'darkness' cpufreq policy governor"
 
 config CPU_FREQ_GOV_ONDEMAND
 	tristate "'ondemand' cpufreq policy governor"
