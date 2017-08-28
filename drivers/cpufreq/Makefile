@@ -14,7 +14,6 @@ obj-$(CONFIG_CPU_FREQ_GOV_ZENERACTIVE)  += cpufreq_zeneractive.o
 obj-$(CONFIG_CPU_FREQ_GOV_CHILL)        += cpufreq_chill.o
 obj-$(CONFIG_CPU_FREQ_GOV_DARKNESS) 	+= cpufreq_darkness.o
 obj-$(CONFIG_CPU_FREQ_GOV_COMMON)		+= cpufreq_governor.o
-obj-$(CONFIG_CPU_FREQ_GOV_RELAXED)	+= cpufreq_relaxed.o
 obj-$(CONFIG_CPU_FREQ_GOV_INTELLIACTIVE)+= cpufreq_intelliactive.o
 obj-$(CONFIG_CPU_BOOST)			+= cpu-boost.o
 
