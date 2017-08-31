@@ -22,7 +22,7 @@ USING_PP_CORE = 2
 MALI_ENABLE_CPU_CYCLES ?= 0
 MALI_ENABLE_GPU_CONTROL_IN_PARAM ?= 1
 DFS_MAX_FREQ = 460800
-DFS_MIN_FREQ = 312000
+DFS_MIN_FREQ = 460800
 
 ifeq ($(CONFIG_MALI400),y)
     MALI_ENABLE_GPU_CONTROL_IN_PARAM = 0
@@ -152,7 +152,7 @@ ccflags-$(CONFIG_MALI400_DEBUG) += -DDEBUG
 
 # Use our defines when compiling
 ccflags-y += -I$(src) -I$(src)/include -I$(src)/common -I$(src)/linux -I$(src)/platform -I$(src)/platform/$(MALI_PLATFORM)
-ccflags-y += -Ofast -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -fsingle-precision-constant -mcpu=cortex-a7 -mtune=cortex-a7 -marm -mfpu=neon-vfpv4
+ccflags-y += -Ofast -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -fsingle-precision-constant
 
 # Get subversion revision number, fall back to only ${MALI_RELEASE_NAME} if no svn info is available
 MALI_RELEASE_NAME=$(shell cat $(src)/.version 2> /dev/null)
