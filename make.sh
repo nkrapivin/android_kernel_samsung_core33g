@@ -1,1 +1,1 @@
-make CORE_defconfig && make -j2
+make AX_defconfig && make -j2
