@@ -21,6 +21,7 @@
 #include "sprdfb_panel.h"
 #include "sprdfb_dispc_reg.h"
 #include "sprdfb_lcdc_reg.h"
+#include <linux/display_state.h>
 
 #ifdef CONFIG_POWERSUSPEND
 #include <linux/powersuspend.h>
@@ -29,6 +30,13 @@
 static LIST_HEAD(panel_list_main);
 static LIST_HEAD(panel_list_sub);
 static DEFINE_MUTEX(panel_mutex);
+
+bool display_on = true;
+
+bool is_display_on(void)
+{
+        return display_on;
+}
 
 uint32_t lcd_id_from_uboot;
 uint32_t lcd_base_from_uboot;
@@ -635,15 +643,17 @@ void sprdfb_panel_suspend(struct sprdfb_device *dev)
 		return;
 	}
 
+#ifdef CONFIG_POWERSUSPEND
+	set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
+#endif
+
+	display_on = false;
+
 	/* 1. send lcd sleep cmd or reset panel directly */
 	if (dev->panel->suspend_mode == SEND_SLEEP_CMD)
 		panel_sleep(dev);
 	else if (!dev->panel->ops->panel_pin_init)
 		panel_reset(dev);
-
-#ifdef CONFIG_POWERSUSPEND
-	set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
-#endif
 
 	/* 2. clk/data lane enter ulps */
 	if (dev->panel->if_ctrl->panel_if_enter_ulps)
@@ -660,6 +670,7 @@ void sprdfb_panel_suspend(struct sprdfb_device *dev)
 		panel_after_suspend(dev);
 
 	pr_info("%s -\n", __func__);
+
 }
 
 void sprdfb_panel_start(struct sprdfb_device *dev)
@@ -688,6 +699,8 @@ void sprdfb_panel_resume(struct sprdfb_device *dev, bool from_deep_sleep)
 #ifdef CONFIG_POWERSUSPEND
 		set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
 #endif
+
+	display_on = true;
 
 	if (from_deep_sleep) {
 		/* 1. turn on mipi */
