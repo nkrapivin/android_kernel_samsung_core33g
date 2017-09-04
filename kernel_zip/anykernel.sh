@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 kernel.string=Apollo_X by HASTAG @ xda-developers
-do.devicecheck=0
+do.devicecheck=1
 do.initd=1
 do.modules=0
 do.cleanup=1
@@ -30,6 +30,10 @@ chmod -R 755 $ramdisk
 dump_boot;
 
 # begin ramdisk changes
+
+# insert casuals init modding
+backup_file init.rc
+insert_line init.rc "import /init.apollo.rc" after "import .*\.rc" "import /init.apollo.rc"
 
 # end ramdisk changes
 

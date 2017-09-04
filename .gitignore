@@ -106,3 +106,4 @@ dt.img
 # shell script
 ~.sh
 make.sh
+init.apollo.rc

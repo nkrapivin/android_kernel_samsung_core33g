@@ -122,7 +122,7 @@ echo -e "";
     echo -e "      ${red}██${NONE}${BCya}║${NONE} ${red}██${NONE}${BCya}║${NONE} ${red}██${NONE}${BCya}║${NONE}      ${red}█████${NONE}${BCya}╔╝${NONE} ${red}██████${NONE}${BCya}╗${NONE} ${red}██████${NONE}${BCya}╗${NONE}  ${red}█████${NONE}${BCya}╔╝${NONE} ${red}████████${NONE}${BCya}╗${NONE} ${red}██${NONE}${BCya}╔╝${NONE}  ${red}██${NONE}${BCya}╗${NONE}";
     echo -e "      ${BCya}╚═╝ ╚═╝ ╚═╝      ╚════╝  ╚═════╝ ╚═════╝  ╚════╝  ╚═══════╝ ╚═╝   ╚═╝${NONE}\n";
 	echo -e "$Whi"
-	echo -e "                                                                     By Hash$nocol";
+	echo -e "                                                                     By Hash07$nocol";
 	echo -e "$yellow"
 	echo -e "Specified Toolchain path:$nocol ${CROSS_COMPILE}";
 	if [ "${USE_CCACHE}" == "1" ]; then
@@ -130,18 +130,12 @@ echo -e "";
 		export CROSS_COMPILE="${CCACHE_PATH} ${CROSS_COMPILE}";
 		export JOBS=8;
 		echo -e "$red";
-		echo -e "You have enabled ccache through *export USE_CCACHE=1*, now using ccache...$nocol";
+		echo -e "You have enabled ccache through *export USE_CCACHE=1*, now using ccache...$nocol\n";
 	fi;
 #Main Menu
-	echo -e "$BBlu";
-	echo -e "***************************************************************$nocol";
-	echo -e "$BCya";
-	echo "     Kernel Apollo_X for Samsung Galaxy Core Prime SM-G360H";
-	echo -e "$BBlu";
-	echo -e "***************************************************************$nocol\n";
 while :
 	do
-	echo -e "$Whi===================${NONE} ${BGre}[!]${NONE} ${BBlu}Main Menu${NONE} ${BGre}[!]${NONE} $Whi===================${NONE}";
+	echo -e "$BCya===================${NONE} ${BGre}[!]${NONE} ${BBlu}AX Kernel Menu${NONE} ${BGre}[!]${NONE} $BCya===================${NONE}";
 	echo -e "$Whi"
 	echo "[1] Cleanup source";
 	echo "[2] Build kernel";
@@ -150,7 +144,7 @@ while :
 	echo -e ""
 	echo " Hit Any key to exit this script";
 	echo -e ""
-	echo -e "$Whi=======================================================$NONE\n";
+	echo -e "$BCya=====================================================================$NONE\n";
 	read -n 1 -p "Select your choice: " -s choice;
 	case ${choice} in
 		1) clean;;
