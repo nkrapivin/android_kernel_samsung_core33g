@@ -67,9 +67,6 @@ enum SPRD_DEVICE_SYNC_TYPE {
 };
 
 struct ion_fence_data {
-	int fence_fd;
-	char name[32];
-	unsigned long value;
 	uint32_t device_type;
 	int life_value;
 	int release_fence_fd;
