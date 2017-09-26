@@ -20,7 +20,6 @@
 
 #define NOOP_IOSCHED "noop"
 #define RESTORE_DELAY_MS (10000)
-#define CHANGE_DELAY_MS (10000)
 
 struct req_queue_data {
 	struct list_head list;
@@ -30,7 +29,6 @@ struct req_queue_data {
 };
 
 static struct delayed_work restore_prev;
-static struct delayed_work restore_back;
 static DEFINE_SPINLOCK(init_lock);
 static struct req_queue_data req_queues = {
 	.list = LIST_HEAD_INIT(req_queues.list),
@@ -75,10 +73,8 @@ static int fb_notifier_callback(struct notifier_block *nb,
 	case FB_BLANK_UNBLANK:
 		/*
 		 * Switch back from noop to the original iosched after a delay
-		 * when the screen is turned on. Also wait for a certain seconds
-		   to avoid accident.
+		 * when the screen is turned on.
 		 */
-		cancel_delayed_work_sync(&restore_back);
 		schedule_delayed_work(&restore_prev,
 				msecs_to_jiffies(RESTORE_DELAY_MS));
 		break;
@@ -89,8 +85,7 @@ static int fb_notifier_callback(struct notifier_block *nb,
 		 * when switching elevators while the screen is off.
 		 */
 		cancel_delayed_work_sync(&restore_prev);
-		schedule_delayed_work(&restore_back,
-				msecs_to_jiffies(CHANGE_DELAY_MS));
+		change_all_elevators(&req_queues.list, true);
 	}
 
 	return NOTIFY_OK;
@@ -103,11 +98,6 @@ static struct notifier_block fb_notifier_callback_nb = {
 static void restore_prev_fn(struct work_struct *work)
 {
 	change_all_elevators(&req_queues.list, false);
-}
-
-static void change_to_noop(struct work_struct *work)
-{
-	change_all_elevators(&req_queues.list, true);
 }
 
 int init_iosched_switcher(struct request_queue *q)
@@ -130,7 +120,6 @@ int init_iosched_switcher(struct request_queue *q)
 static int iosched_switcher_core_init(void)
 {
 	INIT_DELAYED_WORK(&restore_prev, restore_prev_fn);
-	INIT_DELAYED_WORK(&restore_back, change_to_noop);
 	fb_register_client(&fb_notifier_callback_nb);
 
 	return 0;
