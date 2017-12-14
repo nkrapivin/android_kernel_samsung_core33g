@@ -38,6 +38,10 @@
 #include <linux/of_gpio.h>
 #include <linux/of_irq.h>
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fast_charging.h>
+#endif
+
 extern int sec_chg_dt_init(struct device_node *np,
 			 struct device *dev,
 			 sec_battery_platform_data_t *pdata);
@@ -603,7 +607,17 @@ static int sec_chg_set_property(struct power_supply *psy,
 			    (value.intval == POWER_SUPPLY_HEALTH_OVERHEATLIMIT))
 				SM5701_set_vbuslimit_current(charger, 100);
 			else {
+			#ifdef CONFIG_FORCE_FAST_CHARGE
 				/* Set input current limit */
+				if (force_fast_charge > 0) {
+				pr_info("%s : vbus current limit (%dmA)\n",
+					__func__, charger->pdata->charging_current
+					[charger->cable_type].fast_charging_current);
+
+				SM5701_set_vbuslimit_current(
+					charger, charger->pdata->charging_current
+					[charger->cable_type].fast_charging_current);
+				} else if (force_fast_charge == 0) {
 				pr_info("%s : vbus current limit (%dmA)\n",
 					__func__, charger->pdata->charging_current
 					[charger->cable_type].input_current_limit);
@@ -611,6 +625,16 @@ static int sec_chg_set_property(struct power_supply *psy,
 				SM5701_set_vbuslimit_current(
 					charger, charger->pdata->charging_current
 					[charger->cable_type].input_current_limit);
+				}
+			#else
+				pr_info("%s : vbus current limit (%dmA)\n",
+					__func__, charger->pdata->charging_current
+					[charger->cable_type].input_current_limit);
+
+				SM5701_set_vbuslimit_current(
+					charger, charger->pdata->charging_current
+					[charger->cable_type].input_current_limit);
+			#endif
 			}
 
 			/* Set topoff current */
