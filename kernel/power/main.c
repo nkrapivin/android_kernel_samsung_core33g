@@ -352,7 +352,7 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
 #else
 	suspend_state_t state = PM_SUSPEND_STANDBY;
 #endif
-	const char * const *s;
+	struct pm_sleep_state *s;
 #endif
 	char *p;
 	int len;
@@ -369,7 +369,8 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
 
 #ifdef CONFIG_SUSPEND
 	for (s = &pm_states[state]; state < PM_SUSPEND_MAX; s++, state++) {
-		if (*s && len == strlen(*s) && !strncmp(buf, *s, len)) {
+		if (s->label && len == strlen(s->label) &&
+				!strncmp(buf, s->label, len)) {
 #ifdef CONFIG_EARLYSUSPEND
 			if (state == PM_SUSPEND_ON || valid_state(state)) {
 				error = 0;
