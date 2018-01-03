@@ -216,16 +216,26 @@ static struct cpufreq_table_data sc8830_cpufreq_table_data_es = {
 
 static struct cpufreq_table_data sc8830t_cpufreq_table_data_es = {
 	.freq_tbl = {
-		{0, 1200000},
-		{1, 1000000},
-		{2, SHARK_TDPLL_FREQUENCY},
-		{3, CPUFREQ_TABLE_END},
+		{0, 1325000},
+		{1, 1200000},
+		{2, 1050000},
+		{3, 856000},
+		{4, SHARK_TDPLL_FREQUENCY},
+		{5, 625000},
+		{6, 505000},
+		{7, 385000},
+		{8, CPUFREQ_TABLE_END},
 	},
 	.vddarm_mv = {
 		1000000,
+		970000,
+		945000,
+		920000,
 		900000,
-		900000,
-		900000,
+		880000,
+		850000,
+		830000,
+		830000,
 	},
 };
 
