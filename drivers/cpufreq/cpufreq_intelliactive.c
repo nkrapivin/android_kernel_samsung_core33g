@@ -34,7 +34,6 @@
 #include <asm/cputime.h>
 #include <linux/input.h>
 #include <linux/sched/rt.h>
-#include "cpufreq_governor.h"
 
 static int active_count;
 
@@ -67,7 +66,7 @@ static spinlock_t speedchange_cpumask_lock;
 static struct mutex gov_lock;
 
 /* Hi speed to bump to from lo speed when load burst (default max) */
-static unsigned int hispeed_freq = 1090400;
+static unsigned int hispeed_freq;
 
 /* Go to hi speed when CPU load at or above this value. */
 #define DEFAULT_GO_HISPEED_LOAD 99
@@ -135,7 +134,7 @@ static unsigned int up_threshold_any_cpu_load = 97;
 static unsigned int sync_freq = 768000;
 static unsigned int up_threshold_any_cpu_freq = 936800;
 
-static int two_phase_freq_array[NR_CPUS] = {[0 ... NR_CPUS-1] = 1013600} ;
+static int two_phase_freq_array[NR_CPUS] = {[0 ... NR_CPUS-1] = 1050000} ;
 
 static int cpufreq_governor_intelliactive(struct cpufreq_policy *policy,
 		unsigned int event);
@@ -265,7 +264,7 @@ static unsigned int choose_freq(
 
 		if (cpufreq_frequency_table_target(
 			    pcpu->policy, pcpu->freq_table, loadadjfreq / tl,
-			    CPUFREQ_RELATION_L, &index))
+			    CPUFREQ_RELATION_C, &index))
 			break;
 		freq = pcpu->freq_table[index].frequency;
 
@@ -307,7 +306,7 @@ static unsigned int choose_freq(
 				 */
 				if (cpufreq_frequency_table_target(
 					    pcpu->policy, pcpu->freq_table,
-					    freqmin + 1, CPUFREQ_RELATION_L,
+					    freqmin + 1, CPUFREQ_RELATION_C,
 					    &index))
 					break;
 				freq = pcpu->freq_table[index].frequency;
@@ -463,7 +462,7 @@ static void cpufreq_interactive_timer(unsigned long data)
 	pcpu->hispeed_validate_time = now;
 
 	if (cpufreq_frequency_table_target(pcpu->policy, pcpu->freq_table,
-					   new_freq, CPUFREQ_RELATION_L,
+					   new_freq, CPUFREQ_RELATION_C,
 					   &index))
 		goto rearm;
 
@@ -1411,7 +1410,7 @@ static int cpufreq_governor_intelliactive(struct cpufreq_policy *policy,
 					policy->max, CPUFREQ_RELATION_H);
 		else if (policy->min > policy->cur)
 			__cpufreq_driver_target(policy,
-					policy->min, CPUFREQ_RELATION_L);
+					policy->min, CPUFREQ_RELATION_C);
 		for_each_cpu(j, policy->cpus) {
 			pcpu = &per_cpu(cpuinfo, j);
 
