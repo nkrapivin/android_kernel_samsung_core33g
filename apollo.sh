@@ -17,7 +17,7 @@ NAME=Apollo_X
 VERSION=v1
 
 export ARCH=arm
-export CROSS_COMPILE=/home/hash/toolchain/linaro-4.9/bin/arm-eabi-
+export CROSS_COMPILE=/home/hash/toolchain/ubertc-4.9/bin/arm-eabi-
 export LOCALVERSION=-${NAME}-${VERSION}
 export KBUILD_BUILD_USER="Hashtag"
 export KBUILD_BUILD_HOST="Hell_Box"
