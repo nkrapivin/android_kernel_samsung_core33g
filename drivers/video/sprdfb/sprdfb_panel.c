@@ -27,6 +27,10 @@
 #include <linux/powersuspend.h>
 #endif
 
+#ifdef CONFIG_STATE_NOTIFIER
+#include <linux/state_notifier.h>
+#endif
+
 static LIST_HEAD(panel_list_main);
 static LIST_HEAD(panel_list_sub);
 static DEFINE_MUTEX(panel_mutex);
@@ -646,6 +650,9 @@ void sprdfb_panel_suspend(struct sprdfb_device *dev)
 #ifdef CONFIG_POWERSUSPEND
 	set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
 #endif
+#ifdef CONFIG_STATE_NOTIFIER
+		state_suspend();
+#endif
 
 	display_on = false;
 
@@ -698,6 +705,9 @@ void sprdfb_panel_resume(struct sprdfb_device *dev, bool from_deep_sleep)
 
 #ifdef CONFIG_POWERSUSPEND
 		set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
+#endif
+#ifdef CONFIG_STATE_NOTIFIER
+		state_resume();
 #endif
 
 	display_on = true;

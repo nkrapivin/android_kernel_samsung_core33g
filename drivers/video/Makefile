@@ -172,6 +172,8 @@ obj-$(CONFIG_FB_MXS)		  += mxsfb.o
 obj-$(CONFIG_FB_SSD1307)	  += ssd1307fb.o
 obj-$(CONFIG_FB_SIMPLE)           += simplefb.o
 
+obj-$(CONFIG_STATE_NOTIFIER)	  += state_notifier.o
+
 # the test framebuffer is last
 obj-$(CONFIG_FB_VIRTUAL)          += vfb.o
 
