@@ -565,7 +565,7 @@ irqreturn_t gp2a_irq_handler(int irq, void *data)
 	pr_info("%s,%d\n", __func__, irq);
 
 	schedule_work((struct work_struct *)&gp2a->work_prox);
-	wake_lock_timeout(&gp2a->prx_wake_lock, 3*HZ);
+	wake_lock_timeout(&gp2a->prx_wake_lock, 1*HZ);
 
 	return IRQ_HANDLED;
 }
